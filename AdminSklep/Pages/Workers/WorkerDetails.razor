@@ -1,0 +1,51 @@
+@page "/Worker/{WorkerId}"
+@using Services.ServiceInterfaces
+@using Domain
+@inject IWorkerService WorkerService
+@inject NavigationManager NavManager
+
+<h3>WorkerDetails</h3>
+<div class="p-5">
+    @if (_worker == null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <p>ID: @_worker.Id</p>
+        <p>First name: @_worker.FirstName</p>
+        <p>Last name: @_worker.LastName</p>
+        @if (_worker.Outpost == null)
+        {
+            <p>Outpost: -</p>
+        }
+        else
+        {
+            <p>Outpost:
+                        <button class="btn btn-primary" @onclick="() => ViewOutpost(_worker.Outpost.Id)">Check</button>
+            </p>
+        }
+        
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string? WorkerId { get; set; }
+
+    private Worker? _worker = null;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (WorkerId == null)
+            return;
+        
+        _worker = WorkerService.Get(Guid.Parse(WorkerId));
+    }
+
+    private void ViewOutpost(Guid id)
+    {
+        NavManager.NavigateTo("/Outpost/" + id.ToString());
+    }
+
+}

@@ -1,0 +1,52 @@
+@page "/Outpost/{OutpostId}"
+@using Services.ServiceInterfaces
+@using Domain
+@inject IOutpostService OutpostService
+
+<h3>Outpost details</h3>
+<div class="p-5">
+    @if (Outpost == null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <p>ID: @Outpost.Id</p>
+        <p>Name: @Outpost.Name</p>
+        <p>Address: @Outpost.Address</p>
+        <p>Workers:
+            <button class="btn btn-primary" @onclick="() => ViewWorkers(Outpost.Id)">Check</button>
+        </p>
+        <p>Products:
+            <button class="btn btn-primary" @onclick="(() => ViewProducts(Outpost.Id))">Check</button>
+        </p>
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public string OutpostId { get; set; }
+
+    private Outpost? Outpost = null;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (OutpostId == null)
+            return;
+        
+        Outpost = OutpostService.Get(Guid.Parse(OutpostId));
+        if (Outpost == null)
+            return;
+    }
+
+    private void ViewWorkers(Guid Id)
+    {
+        
+    }
+
+    private void ViewProducts(Guid Id)
+    {
+        
+    }
+}

@@ -1,0 +1,87 @@
+@page "/Workers"
+@using Domain
+@using Services
+@using Services.ServiceInterfaces
+@inject IWorkerService WorkerService
+@inject NavigationManager NavManager
+
+<h3>Workers</h3>
+
+@if (_workers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="() => Create()">Create New</button>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Outpost ID</th>
+            <th>Outpost name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var worker in _workers)
+        {
+            <tr>
+                <td>@worker.Id</td>
+                <td>@worker.FirstName</td>
+                <td>@worker.LastName</td>
+                @if (worker.Outpost == null)
+                {
+                    <td>"-"</td>
+                    <td>"-"</td>
+                }
+                else
+                {
+                    <td>@worker.Outpost.Id</td>
+                    <td>@worker.Outpost.Name</td>
+                }
+                
+                <td>
+                    <button class="btn btn-primary" @onclick="() => View(worker.Id)">View</button>
+                    <button class="btn btn-primary" @onclick="() => Edit(worker.Id)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => Delete(worker.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private List<Worker>? _workers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _workers = WorkerService.GetAll();
+    }
+
+    private void Delete(Guid guid)
+    {
+        WorkerService.Delete(guid);
+        _workers = WorkerService.GetAll();
+    }
+
+    private void Create()
+    {
+        NavManager.NavigateTo("/Worker/Form");
+    }
+
+    private void Edit(Guid Id)
+    {
+        NavManager.NavigateTo("/Worker/Form/" + Id.ToString());
+    }
+
+    private void View(Guid Id)
+    {
+        NavManager.NavigateTo("/Worker/" + Id.ToString());
+    }
+
+}

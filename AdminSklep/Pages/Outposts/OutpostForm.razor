@@ -1,0 +1,53 @@
+@page "/Outpost/Form"
+@page "/Outpost/Form/{OutpostId}"
+@using Services.ServiceInterfaces
+@inject NavigationManager NavManager
+@inject IOutpostService OutpostService
+
+<h3>New Outpost!</h3>
+<EditForm class="p-3" Model="@_outpostForm" OnSubmit="@HandleSubmit">
+    <div class="mb-2">
+        <InputText id="name" @bind-Value="_outpostForm.Name" placeholder="Enter outpost name"></InputText>
+    </div>
+    <div class="mb-2">
+        <InputText id="address" @bind-Value="_outpostForm.Address" placeholder="Enter outpost address"></InputText>
+    </div>
+    <div class="mb-2">
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </div>
+</EditForm>
+@code {
+    [Parameter]
+    public string? OutpostId { get; set; }
+    
+    private OutpostFormDetails _outpostForm = new OutpostFormDetails();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (OutpostId == null)
+            return;
+        
+        var outpost = OutpostService.Get(Guid.Parse(OutpostId));
+        if (outpost == null)
+            return;
+        
+        _outpostForm.Name = outpost.Name;
+        _outpostForm.Address = outpost.Address;
+    }
+
+    public class OutpostFormDetails
+    {
+        public string Name { get; set; }
+        public string Address { get; set; }
+    }
+
+    private void HandleSubmit()
+    {
+        if(OutpostId == null)
+            OutpostService.Add(_outpostForm.Name, _outpostForm.Address);
+        else
+            OutpostService.Edit(Guid.Parse(OutpostId), _outpostForm.Name, _outpostForm.Address);
+        
+        NavManager.NavigateTo("/Outposts");
+    }
+}

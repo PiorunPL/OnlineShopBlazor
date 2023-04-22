@@ -1,0 +1,74 @@
+@page "/Outposts"
+@using Domain
+@using Services.ServiceInterfaces
+@inject IOutpostService OutpostService
+@* @inject IModalService modal *@
+@inject NavigationManager NavManager
+<h3>Outposts</h3>
+
+@if (_outposts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="() => Create()">Create New</button>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Address</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var outpost in _outposts)
+            {
+                <tr>
+                    <td>@outpost.Id</td>
+                    <td>@outpost.Address</td>
+                    <td>@outpost.Name</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => View(outpost.Id)">View</button>
+                        <button class="btn btn-primary" @onclick="() => Edit(outpost.Id)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => Delete(outpost.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    // [Inject]
+    // private IOutpostServices _outpostServices { get; set; }
+
+    private List<Outpost>? _outposts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _outposts = OutpostService.GetAll();
+    }
+
+    private void Delete(Guid guid)
+    {
+        OutpostService.Delete(guid);
+        _outposts = OutpostService.GetAll();
+    }
+
+    private void Create()
+    {
+        NavManager.NavigateTo("/Outpost/Form");
+    }
+
+    private void Edit(Guid Id)
+    {
+        NavManager.NavigateTo("/Outpost/Form/" + Id.ToString());
+    }
+
+    private void View(Guid Id)
+    {
+        NavManager.NavigateTo("/Outpost/"+Id.ToString());
+    }
+}
