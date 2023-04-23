@@ -1,6 +1,89 @@
-@page "/Outpost/Workers"
-<h3>OutpostWorkers</h3>
+@page "/Outpost/{OutpostId}/Workers/"
+@using Domain
+@using Services.ServiceInterfaces
+@inject IOutpostService OutpostService
+@inject NavigationManager NavManager
+
+@if (_outpost == null)
+{
+    <h2>Workers of outpost</h2>
+    <h4>Loading...</h4>
+}
+else
+{
+    <h2>Workers of outpost</h2>
+    <h4>@_outpost.Name</h4>
+}
+
+
+@if (_workers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @* <button class="btn btn-primary" @onclick="() => Create()">Create New</button> *@
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var worker in _workers)
+        {
+            <tr>
+                <td>@worker.Id</td>
+                <td>@worker.FirstName</td>
+                <td>@worker.LastName</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="() => View(worker.Id)">View</button>
+                    <button class="btn btn-danger" @onclick="() => Remove(worker.Id)">Remove</button>
+                    @* <button class="btn btn-danger" @onclick="() => Delete(worker.Id)">Delete</button> *@
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
 
 @code {
+    [Parameter]
+    public string? OutpostId { get; set; }
+
+    private Outpost? _listOutpost;
+
+    private Outpost? _outpost;
+    private List<Worker>? _workers;
     
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (OutpostId == null)
+            return;
+        
+        _outpost = OutpostService.Get(Guid.Parse(OutpostId));
+        if (_outpost == null)
+            return;
+        
+        _workers = OutpostService.GetWorkers(_outpost.Id); //TODO IMPLEMENT
+    }
+
+    private void View(Guid id)
+    {
+        NavManager.NavigateTo("/Worker/" + id.ToString());
+    }
+
+    private void Remove(Guid workerId)
+    {
+        if(_outpost == null)
+            return;
+        
+        OutpostService.RemoveWorker(_outpost.Id, workerId);
+        _workers = OutpostService.GetWorkers(_outpost.Id);
+    }
+
 }

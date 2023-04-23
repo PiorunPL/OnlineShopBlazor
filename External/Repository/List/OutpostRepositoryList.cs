@@ -42,7 +42,7 @@ public class OutpostRepositoryList : IOutpostRepository
             return;
         foundOutpost.Address = outpost.Address;
         foundOutpost.Name = outpost.Name;
-        foundOutpost.Workers = outpost.Workers;
+        foundOutpost.WorkersId = outpost.WorkersId;
     }
 
     public void EditWorkers(Outpost outpost)
@@ -50,6 +50,6 @@ public class OutpostRepositoryList : IOutpostRepository
         var foundOutpost = Get(outpost.Id);
         if (foundOutpost == null)
             return;
-        foundOutpost.Workers = outpost.Workers;
+        foundOutpost.WorkersId = outpost.WorkersId;
     }
 }

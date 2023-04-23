@@ -44,7 +44,7 @@ public class WorkerRepositoryList : IWorkerRepository
         var foundWorker = Get(worker.Id);
         if (foundWorker == null)
             return;
-        foundWorker.Outpost = worker.Outpost;
+        foundWorker.OutpostId = worker.OutpostId;
         foundWorker.FirstName = worker.FirstName;
         foundWorker.LastName = worker.LastName;
     }

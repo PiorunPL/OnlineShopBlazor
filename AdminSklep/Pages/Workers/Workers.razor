@@ -3,6 +3,7 @@
 @using Services
 @using Services.ServiceInterfaces
 @inject IWorkerService WorkerService
+@inject IOutpostService OutpostService
 @inject NavigationManager NavManager
 
 <h3>Workers</h3>
@@ -32,15 +33,17 @@ else
                 <td>@worker.Id</td>
                 <td>@worker.FirstName</td>
                 <td>@worker.LastName</td>
-                @if (worker.Outpost == null)
+                @{ _outpost = OutpostService.Get(worker.OutpostId); }
+                @if (_outpost == null)
                 {
                     <td>"-"</td>
                     <td>"-"</td>
                 }
                 else
                 {
-                    <td>@worker.Outpost.Id</td>
-                    <td>@worker.Outpost.Name</td>
+                    
+                    <td>@worker.OutpostId.ToString()</td>
+                    <td>@_outpost.Name</td>
                 }
                 
                 <td>
@@ -57,6 +60,7 @@ else
 @code {
 
     private List<Worker>? _workers;
+    private Outpost? _outpost;
 
     protected override async Task OnInitializedAsync()
     {

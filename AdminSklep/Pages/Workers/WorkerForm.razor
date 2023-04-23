@@ -9,18 +9,18 @@
 
 <h3>Worker form</h3>
 <EditForm class="p-3" Model="@_workerFormDetails" OnSubmit="@HandleSubmit">
-    <div class="mb-2">
-        <label>First name</label>
-        <InputText id="firstName" @bind-Value="_workerFormDetails.FirstName" placeholder="Enter worker first name"></InputText>
+    <div class="mb-3">
+        <label class="d-block" for="firstName">First name</label>
+        <InputText class="d-block" id="firstName" @bind-Value="_workerFormDetails.FirstName" placeholder="Enter worker first name"></InputText>
     </div>
-    <div class="mb-2">
-        <label>Last name</label>
-        <InputText id="lastName" @bind-Value="_workerFormDetails.LastName" placeholder="Enter worker last name"></InputText>
+    <div class="mb-3">
+        <label class="d-block" for="lastName">Last name</label>
+        <InputText class="d-block" id="lastName" @bind-Value="_workerFormDetails.LastName" placeholder="Enter worker last name"></InputText>
     </div>
-    <div class="mb-2">
-        <label>Outpost</label>
-        <InputSelect id="outpost" @bind-Value="_workerFormDetails.Outpost" class="form-control">
-            <option value="null">None</option>
+    <div class="mb-3">
+        <label class="d-block" for="outpost">Outpost</label>
+        <InputSelect id="outpost" @bind-Value="_workerFormDetails.OutpostId" class="form-control d-block">
+            <option value="@Guid.Empty.ToString()">None</option>
             @foreach (var outpost in OutpostService.GetAll())
             {
                 <option value="@outpost.Id.ToString()">@outpost.Name (ID: @outpost.Id)</option>
@@ -55,7 +55,7 @@
 
         _workerFormDetails.FirstName = _worker.FirstName;
         _workerFormDetails.LastName = _worker.LastName;
-        _workerFormDetails.Outpost = _worker.Outpost?.Id.ToString();
+        _workerFormDetails.OutpostId = _worker.OutpostId.ToString();
     }
 
     private void HandleSubmit()
@@ -71,40 +71,42 @@
     {
         if (_worker == null)
             return;
-
-        if (_workerFormDetails.Outpost == null || _workerFormDetails.Outpost.Equals("null"))
-            _worker.Outpost = null;
+        
+        Outpost? outpost = null;
+        
+        if (_workerFormDetails.OutpostId == null || _workerFormDetails.OutpostId.Equals("null"))
+            _worker.OutpostId = Guid.Empty;
         else
         {
-            Guid id = Guid.Parse(_workerFormDetails.Outpost);
-            Outpost? outpost = OutpostService.Get(id);
-            _worker.Outpost = outpost;
+            Guid id = Guid.Parse(_workerFormDetails.OutpostId);
+            outpost = OutpostService.Get(id);
+            // _worker.OutpostId = id;
         }
         
-        WorkerService.Edit(_worker.Id,_worker.FirstName,_worker.LastName, _worker.Outpost);
+        WorkerService.Edit(_worker.Id,_worker.FirstName,_worker.LastName, outpost);
     }
 
     private void HandleCreate()
     {
         _worker = Worker.CreateNew(_workerFormDetails.FirstName, _workerFormDetails.LastName);
+        Outpost? outpost = null;
 
-
-        if (_workerFormDetails.Outpost == null || _workerFormDetails.Outpost.Equals("null"))
-            _worker.Outpost = null;
+        if (_workerFormDetails.OutpostId == null || _workerFormDetails.OutpostId.Equals("null"))
+            _worker.OutpostId = Guid.Empty;
         else
         {
-            Guid id = Guid.Parse(_workerFormDetails.Outpost);
-            Outpost? outpost = OutpostService.Get(id);
-            _worker.Outpost = outpost;
+            Guid id = Guid.Parse(_workerFormDetails.OutpostId);
+            outpost = OutpostService.Get(id);
+            // _worker.OutpostId = id;
         }
         
-        WorkerService.Add(_worker.FirstName, _worker.LastName, _worker.Outpost);
+        WorkerService.Add(_worker.FirstName, _worker.LastName, outpost);
     }
 
     public class WorkerFormDetails
     {
         public string FirstName = "";
         public string LastName = "";
-        public string? Outpost;
+        public string? OutpostId;
     }
 }

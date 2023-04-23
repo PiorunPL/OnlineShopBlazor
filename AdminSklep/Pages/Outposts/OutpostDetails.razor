@@ -2,6 +2,7 @@
 @using Services.ServiceInterfaces
 @using Domain
 @inject IOutpostService OutpostService
+@inject NavigationManager NavManager
 
 <h3>Outpost details</h3>
 <div class="p-5">
@@ -40,12 +41,12 @@
             return;
     }
 
-    private void ViewWorkers(Guid Id)
+    private void ViewWorkers(Guid id)
     {
-        
+        NavManager.NavigateTo("/Outpost/" + id.ToString() + "/Workers/");
     }
 
-    private void ViewProducts(Guid Id)
+    private void ViewProducts(Guid id)
     {
         
     }

@@ -15,14 +15,14 @@
         <p>ID: @_worker.Id</p>
         <p>First name: @_worker.FirstName</p>
         <p>Last name: @_worker.LastName</p>
-        @if (_worker.Outpost == null)
+        @if (_worker.OutpostId.Equals(Guid.Empty))
         {
             <p>Outpost: -</p>
         }
         else
         {
             <p>Outpost:
-                        <button class="btn btn-primary" @onclick="() => ViewOutpost(_worker.Outpost.Id)">Check</button>
+                        <button class="btn btn-primary" @onclick="() => ViewOutpost(_worker.OutpostId)">Check</button>
             </p>
         }
         

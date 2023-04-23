@@ -11,7 +11,8 @@ public interface IOutpostService
     public void Edit(Guid id, string name, string address);
     
     // Workers
-    public void EditWorkers(Guid outpostId, List<Worker> workers);
+    public List<Worker> GetWorkers(Guid outpostId);
+    public void EditWorkers(Guid outpostId, List<Guid> workers);
     public void AddWorkers(Guid outpostId, Guid workerId);
     public void RemoveWorker(Guid outpostId, Guid workerId);
     

@@ -6,13 +6,15 @@
 
 <h3>New Outpost!</h3>
 <EditForm class="p-3" Model="@_outpostForm" OnSubmit="@HandleSubmit">
-    <div class="mb-2">
-        <InputText id="name" @bind-Value="_outpostForm.Name" placeholder="Enter outpost name"></InputText>
+    <div class="mb-3">
+        <label for="name" class="d-block">Outpost name</label>
+        <InputText class="d-block" id="name" @bind-Value="_outpostForm.Name" placeholder="Enter outpost name"></InputText>
     </div>
-    <div class="mb-2">
-        <InputText id="address" @bind-Value="_outpostForm.Address" placeholder="Enter outpost address"></InputText>
+    <div class="mb-3">
+        <label for="address" class="d-block">Outpost address</label>
+        <InputText class="d-block" id="address" @bind-Value="_outpostForm.Address" placeholder="Enter outpost address"></InputText>
     </div>
-    <div class="mb-2">
+    <div class="mb-3">
         <button class="btn btn-primary" type="submit">Submit</button>
     </div>
 </EditForm>

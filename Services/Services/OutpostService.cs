@@ -6,10 +6,12 @@ namespace Services;
 public class OutpostService : IOutpostService
 {
     private readonly IOutpostRepository _outpostRepository;
+    private readonly IWorkerRepository _workerRepository;
 
-    public OutpostService(IOutpostRepository outpostRepository)
+    public OutpostService(IOutpostRepository outpostRepository, IWorkerRepository workerRepository)
     {
         _outpostRepository = outpostRepository;
+        _workerRepository = workerRepository;
     }
 
     public List<Outpost> GetAll()
@@ -43,9 +45,30 @@ public class OutpostService : IOutpostService
         _outpostRepository.Edit(tempOutpost);
     }
 
-    public void EditWorkers(Guid outpostId, List<Worker> workers)
+    public List<Worker> GetWorkers(Guid outpostId)
     {
-        _outpostRepository.EditWorkers(new Outpost{Id = outpostId, Workers = workers});
+        List<Worker> workers = new List<Worker>();
+
+        var outpost = _outpostRepository.Get(outpostId);
+        if (outpost != null)
+        {
+            foreach (var workerId in outpost.WorkersId)
+            {
+                var worker = _workerRepository.Get(workerId);
+                if (worker != null)
+                {
+                    workers.Add(worker);
+                }
+            }
+            
+        }
+
+        return workers;
+    }
+
+    public void EditWorkers(Guid outpostId, List<Guid> workers)
+    {
+        _outpostRepository.EditWorkers(new Outpost{Id = outpostId, WorkersId = workers});
     }
 
     public void AddWorkers(Guid outpostId, Guid workerId)
@@ -55,7 +78,22 @@ public class OutpostService : IOutpostService
 
     public void RemoveWorker(Guid outpostId, Guid workerId)
     {
-        throw new NotImplementedException();
+        var outpost = _outpostRepository.Get(outpostId);
+        if (outpost == null)
+            return;
+
+        var worker = _workerRepository.Get(workerId);
+        if (worker == null)
+            return;
+
+        // if (!worker.OutpostId.Equals(outpost.Id) || !outpost.WorkersId.Contains(worker.Id))
+        //     return;
+        
+        outpost.WorkersId.Remove(worker.Id);
+        _outpostRepository.EditWorkers(outpost);
+
+        worker.OutpostId = Guid.Empty;
+        _workerRepository.Edit(worker);
     }
 
     public void EditProducts(Guid outpostId, List<Product> products)
